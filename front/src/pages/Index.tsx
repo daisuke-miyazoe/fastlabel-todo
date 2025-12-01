@@ -26,6 +26,7 @@ const Index: FC<Props> = () => {
   const todoStore = TodoStore.useContainer();
 
   const [items, setItems] = useState<ItemVO[]>([]);
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   useEffect(() => {
     todoStore.loadItems().then((data) => setItems(data));
@@ -43,7 +44,9 @@ const Index: FC<Props> = () => {
       isDone: false,
     });
     if (item) {
-      setItems([...items, item]);
+      setSearchKeyword("");
+      const allItems = await todoStore.loadItems();
+      setItems(allItems);
     } else {
       enqueueSnackbar("TODOの追加に失敗しました");
     }
@@ -89,6 +92,7 @@ const Index: FC<Props> = () => {
   };
 
   const onSearchItem = async (keyword: string) => {
+    setSearchKeyword(keyword);
     const items = await todoStore.searchItems(keyword);
     setItems(items);
   };
@@ -101,7 +105,7 @@ const Index: FC<Props> = () => {
             <ItemForm onAddItem={onAddItem} />
           </Box>
           <Box>
-            <ItemSearch onSearchItem={onSearchItem} />
+            <ItemSearch keyword={searchKeyword} onSearchItem={onSearchItem} />
           </Box>
           <Box>
             <ItemList

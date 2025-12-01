@@ -1,14 +1,13 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
 type Props = {
+  keyword: string;
   onSearchItem: (keyword: string) => Promise<void>;
 };
 
-const ItemSearch: FC<Props> = ({ onSearchItem }) => {
-  const [keyword, setKeyword] = useState("");
-
+const ItemSearch: FC<Props> = ({ keyword, onSearchItem }) => {
   return (
     <Box>
       <TextField
@@ -18,7 +17,6 @@ const ItemSearch: FC<Props> = ({ onSearchItem }) => {
         size="small"
         fullWidth
         onChange={(e) => {
-          setKeyword(e.target.value);
           onSearchItem(e.target.value);
         }}
       />
