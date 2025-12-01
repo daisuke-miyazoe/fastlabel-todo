@@ -54,7 +54,7 @@ const Index: FC<Props> = () => {
     if (item) {
       const updatedList = items.map((i) => {
         if (i.id === id) {
-          return { ...i, isDone: !i.isDone };
+          return { ...i, isDone: item.isDone };
         }
         return i;
       });
