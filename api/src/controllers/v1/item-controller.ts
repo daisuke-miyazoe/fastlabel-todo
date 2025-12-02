@@ -39,6 +39,12 @@ export class ItemController extends Controller {
     return this.itemService.search(keyword);
   }
 
+  @Get("priority")
+  @SuccessResponse(200, "Return Items by Priority")
+  public getByPriority(@Query() priority?: string): Promise<ItemVO[]> {
+    return this.itemService.getByPriority(priority);
+  }
+
   @Get("{id}")
   @SuccessResponse(200, "Return Item")
   public find(id: string): Promise<ItemVO> {

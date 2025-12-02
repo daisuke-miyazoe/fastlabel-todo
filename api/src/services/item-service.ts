@@ -43,7 +43,8 @@ export class ItemService {
     }
     const lastItem = await currentItem.findLastByOrder();
     const order = lastItem ? lastItem.order + 1 : 1;
-    const newItem = new ItemDto(uuid(), order, params.content, params.isDone);
+    const priority = params.priority || "medium";
+    const newItem = new ItemDto(uuid(), order, params.content, params.isDone, priority);
     await currentItem.save(newItem.toEntity());
     return newItem.toVO();
   }
@@ -53,8 +54,14 @@ export class ItemService {
     if (params.order !== undefined) dto.order = params.order;
     if (params.content !== undefined) dto.content = params.content;
     if (params.isDone !== undefined) dto.isDone = params.isDone;
+    if (params.priority !== undefined) dto.priority = params.priority;
     await this.itemRepository.save(dto);
     return dto.toVO();
+  }
+
+  async getByPriority(priority?: string): Promise<ItemVO[]> {
+    const dtos = await this.itemRepository.getByPriority(priority);
+    return dtos.map((d) => d.toVO());
   }
 
   async count(): Promise<number> {

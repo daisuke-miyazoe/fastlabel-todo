@@ -22,16 +22,23 @@ export class Item {
   @Column({ name: "is_done", default: false })
   isDone: boolean;
 
+  @Column({ length: 10, default: "medium" })
+  priority: string;
+
+  @Column({ length: 10, default: "m" })
+  m: string;
+
   @CreateDateColumn({ name: "created_at" })
   readonly createdAt: Date;
 
   @UpdateDateColumn({ name: "updated_at" })
   readonly updatedAt: Date;
 
-  constructor(id: string, order: number, content: string, isDone: boolean) {
+  constructor(id: string, order: number, content: string, isDone: boolean, priority: string = "medium") {
     this.id = id;
     this.order = order;
     this.content = content;
     this.isDone = isDone;
+    this.priority = priority;
   }
 }

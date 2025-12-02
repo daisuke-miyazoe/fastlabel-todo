@@ -3,4 +3,5 @@ export type ItemVO = {
   order: number;
   content: string;
   isDone: boolean;
+  priority: string;
 };

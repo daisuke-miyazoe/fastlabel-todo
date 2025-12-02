@@ -8,6 +8,7 @@ import { ItemVO } from "../types/vo";
 import ItemList from "../components/ItemList";
 import ItemForm from "../components/ItemForm";
 import ItemSearch from "../components/ItemSearch";
+import PriorityFilter from "../components/PriorityFilter";
 import { TodoStore } from "../stores/todo-store";
 import { useSnackbar } from "notistack";
 import { TODO_MAX_LIMIT } from "../types/const";
@@ -27,13 +28,14 @@ const Index: FC<Props> = () => {
 
   const [items, setItems] = useState<ItemVO[]>([]);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("all");
 
   useEffect(() => {
     todoStore.loadItems().then((data) => setItems(data));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onAddItem = async (itemContent: string) => {
+  const onAddItem = async (itemContent: string, priority: string) => {
     const count = await todoStore.countItem();
     if (count >= TODO_MAX_LIMIT) {
       enqueueSnackbar("追加できるTODOは最大10件です");
@@ -42,9 +44,11 @@ const Index: FC<Props> = () => {
     const item = await todoStore.createItem({
       content: itemContent,
       isDone: false,
+      priority,
     });
     if (item) {
       setSearchKeyword("");
+      setPriorityFilter("all");
       const allItems = await todoStore.loadItems();
       setItems(allItems);
     } else {
@@ -97,6 +101,18 @@ const Index: FC<Props> = () => {
     setItems(items);
   };
 
+  const onFilterPriority = async (priority: string) => {
+    setPriorityFilter(priority);
+    setSearchKeyword("");
+    if (priority === "all") {
+      const allItems = await todoStore.loadItems();
+      setItems(allItems);
+    } else {
+      const filteredItems = await todoStore.loadItemsByPriority(priority);
+      setItems(filteredItems);
+    }
+  };
+
   return (
     <Box p={2} className={styles.root}>
       <Grid container justifyContent="center" textAlign="center" spacing={2}>
@@ -106,6 +122,9 @@ const Index: FC<Props> = () => {
           </Box>
           <Box>
             <ItemSearch keyword={searchKeyword} onSearchItem={onSearchItem} />
+          </Box>
+          <Box>
+            <PriorityFilter priority={priorityFilter} onFilterPriority={onFilterPriority} />
           </Box>
           <Box>
             <ItemList

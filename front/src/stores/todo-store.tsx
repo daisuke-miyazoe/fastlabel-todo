@@ -54,6 +54,15 @@ export const useTodoStore = () => {
     return response.data;
   }
 
+  const loadItemsByPriority = async (priority?: string): Promise<ItemVO[]> => {
+    const axios = AxiosUtil.createBase();
+    const url = priority ? `/items/priority?priority=${priority}` : '/items/priority';
+    const response = await axios.get<ItemVO[]>(url).catch((e) => {
+      return { data: [] };
+    });
+    return response.data;
+  };
+
   return {
     loadItems,
     countItem,
@@ -61,6 +70,7 @@ export const useTodoStore = () => {
     updateItem,
     deleteItem,
     searchItems,
+    loadItemsByPriority,
   };
 };
 
