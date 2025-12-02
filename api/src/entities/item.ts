@@ -25,9 +25,6 @@ export class Item {
   @Column({ length: 10, default: "medium" })
   priority: string;
 
-  @Column({ length: 10, default: "m" })
-  m: string;
-
   @CreateDateColumn({ name: "created_at" })
   readonly createdAt: Date;
 
