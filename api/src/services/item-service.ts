@@ -20,11 +20,7 @@ export class ItemService {
 
   async get(): Promise<ItemVO[]> {
     const dtos = await this.itemRepository.get();
-    const results = [] as any;
-    dtos.forEach((d) => {
-      results.push(d.toVO());
-    });
-    return results;
+    return dtos.map((dto) => dto.toVO());
   }
 
   async find(id: string): Promise<ItemVO> {
@@ -38,26 +34,41 @@ export class ItemService {
   }
 
   async create(params: ItemCreateParams): Promise<ItemVO> {
-    const r = this.itemRepository;
-    if ((await r.count()) >= 10) {
+    const currentItem = this.itemRepository;
+    if ((await currentItem.count()) >= 10) {
       throw new ClientError(
         ClientErrorStatusCodes.UNPROCESSABLE_ENTITY,
         "Todo count is up to 10."
       );
     }
-    const item1 = await r.findLastByOrder();
-    const order = item1 ? item1.order + 1 : 1;
-    const item2 = new ItemDto(uuid(), order, params.content, params.isDone);
-    await r.save(item2.toEntity());
-    return item2.toVO();
+    const lastItem = await currentItem.findLastByOrder();
+    const order = lastItem ? lastItem.order + 1 : 1;
+    const priority = params.priority || "medium";
+    const newItem = new ItemDto(uuid(), order, params.content, params.isDone, priority);
+    await currentItem.save(newItem.toEntity());
+    return newItem.toVO();
   }
 
   async update(id: string, params: ItemUpdateParams): Promise<ItemVO> {
     const dto = await this.itemRepository.findByIdOrFail(id);
-    if (params.order) dto.order = params.order;
-    if (params.content) dto.content = params.content;
-    if (params.isDone) dto.isDone = params.isDone;
+    if (params.order !== undefined) dto.order = params.order;
+    if (params.content !== undefined) dto.content = params.content;
+    if (params.isDone !== undefined) dto.isDone = params.isDone;
+    if (params.priority !== undefined) dto.priority = params.priority;
     await this.itemRepository.save(dto);
     return dto.toVO();
+  }
+
+  async getByPriority(priority?: string): Promise<ItemVO[]> {
+    const dtos = await this.itemRepository.getByPriority(priority);
+    return dtos.map((d) => d.toVO());
+  }
+
+  async count(): Promise<number> {
+    return this.itemRepository.count();
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.itemRepository.delete(id);
   }
 }

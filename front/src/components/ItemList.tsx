@@ -17,7 +17,28 @@ const useStyles = makeStyles((theme: Theme) => ({
   completed: {
     color: "#808080",
   },
+  priorityHigh: {
+    backgroundColor: "#ffebee",
+    borderLeft: "4px solid #f44336",
+  },
+  priorityMedium: {
+    backgroundColor: "#fff8e1",
+    borderLeft: "4px solid #ff9800",
+  },
+  priorityLow: {
+    backgroundColor: "#e8f5e9",
+    borderLeft: "4px solid #4caf50",
+  },
 }));
+
+const getPriorityClass = (priority: string, styles: any) => {
+  switch (priority) {
+    case "high": return styles.priorityHigh;
+    case "medium": return styles.priorityMedium;
+    case "low": return styles.priorityLow;
+    default: return styles.priorityMedium;
+  }
+};
 
 type Props = {
   items: ItemVO[];
@@ -54,6 +75,7 @@ const ItemList: FC<Props> = ({
             <ListItem
               key={ItemVO.id}
               dense
+              className={getPriorityClass(ItemVO.priority || "medium", styles)}
               secondaryAction={
                 <>
                   <IconButton

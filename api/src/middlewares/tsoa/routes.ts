@@ -13,17 +13,17 @@ import * as express from 'express';
 const models: TsoaRoute.Models = {
     "ItemVO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"isDone":{"dataType":"boolean","required":true},"content":{"dataType":"string","required":true},"order":{"dataType":"double","required":true},"id":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"priority":{"dataType":"string","required":true},"isDone":{"dataType":"boolean","required":true},"content":{"dataType":"string","required":true},"order":{"dataType":"double","required":true},"id":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ItemCreateParams": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"isDone":{"dataType":"boolean","required":true},"content":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"priority":{"dataType":"string"},"isDone":{"dataType":"boolean","required":true},"content":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ItemUpdateParams": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"isDone":{"dataType":"boolean"},"content":{"dataType":"string"},"order":{"dataType":"double"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"priority":{"dataType":"string"},"isDone":{"dataType":"boolean"},"content":{"dataType":"string"},"order":{"dataType":"double"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -67,7 +67,6 @@ export function RegisterRoutes(app: express.Router) {
 
             async function ItemController_count(request: any, response: any, next: any) {
             const args = {
-                    req: {"in":"request","name":"req","required":true,"dataType":"object"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -95,7 +94,6 @@ export function RegisterRoutes(app: express.Router) {
 
             async function ItemController_search(request: any, response: any, next: any) {
             const args = {
-                    req: {"in":"request","name":"req","required":true,"dataType":"object"},
                     keyword: {"default":"","in":"query","name":"keyword","dataType":"string"},
             };
 
@@ -120,11 +118,38 @@ export function RegisterRoutes(app: express.Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/v1/items/priority',
+
+            async function ItemController_getByPriority(request: any, response: any, next: any) {
+            const args = {
+                    priority: {"in":"query","name":"priority","dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<ItemController>(ItemController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+
+              const promise = controller.getByPriority.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/v1/items/:id',
 
             async function ItemController_find(request: any, response: any, next: any) {
             const args = {
-                    req: {"in":"request","name":"req","required":true,"dataType":"object"},
                     id: {"in":"path","name":"id","required":true,"dataType":"string"},
             };
 
@@ -153,7 +178,6 @@ export function RegisterRoutes(app: express.Router) {
 
             async function ItemController_post(request: any, response: any, next: any) {
             const args = {
-                    req: {"in":"request","name":"req","required":true,"dataType":"object"},
                     params: {"in":"body","name":"params","required":true,"ref":"ItemCreateParams"},
             };
 
@@ -182,7 +206,6 @@ export function RegisterRoutes(app: express.Router) {
 
             async function ItemController_put(request: any, response: any, next: any) {
             const args = {
-                    req: {"in":"request","name":"req","required":true,"dataType":"object"},
                     id: {"in":"path","name":"id","required":true,"dataType":"string"},
                     params: {"in":"body","name":"params","required":true,"ref":"ItemUpdateParams"},
             };
@@ -212,7 +235,6 @@ export function RegisterRoutes(app: express.Router) {
 
             async function ItemController_delete(request: any, response: any, next: any) {
             const args = {
-                    req: {"in":"request","name":"req","required":true,"dataType":"object"},
                     id: {"in":"path","name":"id","required":true,"dataType":"string"},
             };
 
